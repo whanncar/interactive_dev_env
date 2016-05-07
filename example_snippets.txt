@@ -1,0 +1,10 @@
+
+
+<snippet>
+<pseudocode>
+store _a_ + _b_ in _c_
+</pseudocode>
+<code>
+_c_ = _a_ + _b_;
+</code>
+</snippet>
