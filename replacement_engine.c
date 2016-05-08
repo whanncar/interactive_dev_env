@@ -123,6 +123,7 @@ string_token_node *tokenize(char *s) {
 
     int i, j;
     int length;
+    int newline;
     string_token_node *tokens = NULL;
     string_token_node *current_token = NULL;
     string_token_node *new_token = NULL;
@@ -136,6 +137,11 @@ string_token_node *tokenize(char *s) {
             /* If this character is a return, increment length */
             if (s[i] == '\n') {
                 length++;
+                i++;
+                newline = 1;
+            }
+            else {
+                newline = 0;
             }
             /* 
              * If this character is a space and was preceded
@@ -169,6 +175,9 @@ string_token_node *tokenize(char *s) {
             (new_token->token)[length] = '\0';
             /* Get ready for the next token */
             length = 0;
+            if (newline) {
+                i--;
+            }
             current_token = new_token;
         }
         /* If the character is not a space, increment length */
