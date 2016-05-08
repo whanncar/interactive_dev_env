@@ -17,3 +17,8 @@ typedef struct snippet_binary_tree {
     snippet_tree_node *root;
 
 } snippet_tree;
+
+
+
+void add_snippet_to_tree(snippet_tree *, snippet *);
+
