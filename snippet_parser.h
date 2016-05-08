@@ -6,17 +6,19 @@
 
 typedef struct snippet_struct {
 
-    char **pseudocode;
-    char **description;
-    char **code; 
+    char *pseudocode;
+/* removed for testing UNRESOLVED    char **description; */
+    char *code; 
 
 } snippet;
 
 
 typedef struct tag_linked_list {
 
-    char **start_tag;
-    char **end_tag;
+    char *name;
+
+    char *start_tag;
+    char *end_tag;
 
     int start_tag_length;
     int end_tag_length;
@@ -31,4 +33,4 @@ typedef struct tag_linked_list {
 
 snippet *parse_snippet(char *, tag_list *);
 void free_snippet(snippet *);
-void print_snippet(snippet *);
+void print_snippet(snippet *, tag_list *);

@@ -3,16 +3,13 @@
  *
  */
 
-#include <stdlib>
-#include <stdio>
-#include <string>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include "snippet_parser.h"
 
-#define DESCRIPTION_START_TAG "<description>"
-#define DESCRIPTION_END_TAG "</description>"
-#define DESCRIPTION_TAG_LENGTH 13
-
-char **get_block(char *, tag_list *);
-char **get_substring(char *, int, int);
+char *get_block(char *, tag_list *);
+char *get_substring(char *, int, int);
 int *get_block_bounds(char *, char *, int, char *, int);
 
 
@@ -31,7 +28,6 @@ int *get_block_bounds(char *, char *, int, char *, int);
 snippet *parse_snippet(char *raw_snippet, tag_list *tags) {
 
     int i;
-    char *block;
 
     /* Allocate space for the snippet */
     snippet *s = (snippet *) malloc(sizeof(snippet)); 
@@ -60,12 +56,12 @@ snippet *parse_snippet(char *raw_snippet, tag_list *tags) {
  *
  */
 
-char **get_block(char *raw_snippet, tag_list *tag) {
+char *get_block(char *raw_snippet, tag_list *tag) {
 
     /* Get start position and length of block */
     int *bounds = get_block_bounds(raw_snippet,
-                                   *(tag->start_tag), tag->start_tag_length,
-                                   *(tag->end_tag), tag->end_tag_length);
+                                   tag->start_tag, tag->start_tag_length,
+                                   tag->end_tag, tag->end_tag_length);
 
     /* If block was not found, return NULL */
     if (bounds[0] == -1) {
@@ -91,12 +87,14 @@ char **get_block(char *raw_snippet, tag_list *tag) {
  *
  */
 
-char **get_substring(char *s, int start, int length) {
+char *get_substring(char *s, int start, int length) {
 
     int i;
 
+    char *block;
+
     /* Allocate space for the copy */
-    char *block = (char *) malloc((length + 1) * sizeof(char));
+    block = (char *) malloc((length + 1) * sizeof(char));
 
     /* Copy the substring */
     for (i = 0; i < length; i++) {
@@ -106,7 +104,7 @@ char **get_substring(char *s, int start, int length) {
     /* Add string termination character */
     block[length] = '\0';
 
-    return &block;
+    return block;
 
 }
 
@@ -130,13 +128,19 @@ char **get_substring(char *s, int start, int length) {
  *
  */
 
+
+/* CAUSES AN UNDESIRED MEMORY LEAK UNRESOLVED */
+
 int *get_block_bounds(char *raw_snippet,
                       char *start_tag, int start_tag_length,
                       char *end_tag, int end_tag_length)
 {
 
     int i, j, found_tag;
-    int bounds[] = {-1, -1};
+    int *bounds = (int *) malloc(2 * sizeof(int));
+
+    bounds[0] = -1;
+    bounds[1] = -1;
 
     /* For each possible position of the tag */
     for (i = 0; raw_snippet[i + start_tag_length] != '\0'; i++) {
@@ -187,7 +191,7 @@ int *get_block_bounds(char *raw_snippet,
              * just after the end of the block
              */
             j--;
-            bounds[1] = j;
+            bounds[1] = i;
             break;
         }
     }
@@ -218,7 +222,7 @@ void free_snippet(snippet *s) {
 
     /* Do I need to free? Will these live on the heap? UNRESOLVED */
     free(s->pseudocode);
-    free(s->description);
+/* Removed for testing UNRESOLVED    free(s->description); */
     free(s->code);
 
     free(s);
@@ -232,26 +236,22 @@ void free_snippet(snippet *s) {
  *
  * arguments: s: Pointer to snippet whose information will be printed
  *
+ *
+ * Not up to date UNRESOLVED
  */
 
-void print_snippet(snippet *s) {
+void print_snippet(snippet *s, tag_list *tags) {
 
-    /* Print pseudocode */
-    printf("\nPseudocode:\n\n");
-    if (s->pseudocode != NULL) {
-        printf("%s\n", *(s->pseudocode));
-    }
-    else {
-        printf("No pseudocode tag found\n");
-    }
+    int i;
 
-    /* Print code */
-    printf("\nCode:\n\n");
-    if (s->code != NULL) {
-        printf("%s\n", *(s->code));
-    }
-    else {
-        printf("No code tag found\n");
+    for(i = 0; tags != NULL; tags = tags->next, i++) {
+        printf("\n%s:\n\n", tags->name);
+        if (((char **) s)[i] != NULL) {
+            printf("%s\n", ((char **) s)[i]);
+        }
+        else {
+            printf("No pseudocode tag found\n");
+        }
     }
 
 }
