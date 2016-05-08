@@ -7,7 +7,7 @@ typedef struct replacement_token {
 
 } replacement_token;
 
-
+/*
 
 typedef struct code_token {
 
@@ -16,7 +16,7 @@ typedef struct code_token {
 
 } code_token;
 
-
+*/
 
 typedef struct replacement_token_linked_list_node {
 
@@ -27,7 +27,7 @@ typedef struct replacement_token_linked_list_node {
 } replacement_node;
 
 
-
+/*
 typedef struct code_token_linked_list_node {
 
     code_token *token;
@@ -35,4 +35,13 @@ typedef struct code_token_linked_list_node {
     struct code_token_linked_list_node *next;
 
 } code_node;
+*/
 
+
+typedef struct string_token_linked_list_node {
+
+    char *token;
+
+    struct string_token_linked_list_node *next;
+
+} string_token_node;
