@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "replacement_engine.h"
 #include <string.h>
 
@@ -40,6 +41,8 @@ replacement_node *preprocess_replacements(char *pseudocode_template,
     replacement_node *new_replacement_node = NULL;
     string_token_node *p_t_token_list;
     string_token_node *p_token_list;
+
+    string_token_node *temp;
 
     /* Tokenize the template and the instruction */
     p_t_token_list = tokenize(pseudocode_template);
@@ -127,9 +130,9 @@ string_token_node *tokenize(char *s) {
     length = 0;
 
     /* For each character in s */
-    for(i = 0; s[i] != '\0'; i++) {
-        /* If the character is a space or a return */
-        if (s[i] == ' ' || s[i] == '\n') {
+    for(i = 0; i == 0 || s[i - 1] != '\0'; i++) {
+        /* If the character is a space or a return or the end of the string */
+        if (s[i] == ' ' || s[i] == '\n' || s[i] == '\0') {
             /* If this character is a return, increment length */
             if (s[i] == '\n') {
                 length++;
@@ -173,6 +176,9 @@ string_token_node *tokenize(char *s) {
             length++;
         }
     }
+
+    return tokens;
+
 }
 
 
@@ -195,7 +201,7 @@ char *detokenize(string_token_node *tokenized_code) {
         /* If the token does not end with a return */
         if ((current_token->token)[len - 1] != '\n') {
             /* Add a space at the end */
-            current_token->token = realloc(current_token->token, (len + 2) * sizeof(char));
+            current_token->token = realloc(current_token->token, (len + 2) * sizeof(char)); 
             len++;
             (current_token->token)[len-1] = ' ';
             (current_token->token)[len] = '\0';
@@ -231,8 +237,8 @@ char *detokenize(string_token_node *tokenized_code) {
 
 
 /* Replaced anything that should be replaced in the tokenized code */
-void execute_preprocessed_replacement(replacement_node *replacements,
-                                      string_token_node *tokenized_code) {
+void execute_preprocess_replacement(replacement_node *replacements,
+                                    string_token_node *tokenized_code) {
     int i, len;
     replacement_node *replacement;
     string_token_node *current_code_token;

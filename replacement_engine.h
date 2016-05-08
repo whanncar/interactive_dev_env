@@ -26,3 +26,7 @@ typedef struct string_token_linked_list_node {
     struct string_token_linked_list_node *next;
 
 } string_token_node;
+
+
+
+char *execute_replacement(char *, char *, char *);
