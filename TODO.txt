@@ -1,0 +1,6 @@
+
+
+Need to figure out what to do about memory leaks coming from int * pair;
+    should every method that uses it be responsible for freeing? Seems reasonable.
+
+Need to write a method for freeing the tag list
