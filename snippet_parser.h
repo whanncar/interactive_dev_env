@@ -4,7 +4,7 @@
  */
 
 
-typedef struct snippet_struct {
+typedef struct snippet {
 
     char *pseudocode;
 /* removed for testing UNRESOLVED    char **description; */
