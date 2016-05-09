@@ -1,6 +1,22 @@
 
 
+int prefix_match_length(char *str1, char *str2) {
 
+    int i;
+
+    for (i = 0; str1[i] != '\0', str2[i] != '\0', str1[i] == str2[i]; i++);
+
+    return i;
+
+}
+
+int is_alphanumeric(char c) {
+
+    return ('0' <= c && c <= '9') ||
+           ('a' <= c && c <= 'z') ||
+           ('A' <= c && c <= 'Z');
+
+}
 
 char *copy_substring(char *str, int len) {
 

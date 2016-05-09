@@ -167,24 +167,51 @@ char *detokenize(string_token_node *tokenized_code) {
 /* Replaced anything that should be replaced in the tokenized code */
 void execute_preprocess_replacement(replacement_node *replacements,
                                     string_token_node *tokenized_code) {
-    int i, len;
+    int i, len, prefix;
     replacement_node *replacement;
     string_token_node *current_code_token;
 
     /* For each code token */
-    for (current_code_token = tokenized_code;
+    for (current_code_token = tokenized_code->first;
          current_code_token != NULL;
          current_code_token = current_code_token->next) {
         /* For each possible replacement */
         for (replacement = replacements; 
              replacement != NULL;
              replacement = replacement->next) {
+
+            len = string_length(replacement->token->name);
+
+            prefix = prefix_match_length(current_code_token->value,
+                                         replacement->token->name);
+
+            if (len == prefix) {
+
+                if (len == string_length(current_code_token->value)) {
+
+                    set_string_token_value(current_code_token,
+                        copy_substring(replacement->token->value),
+                            string_length(replacement->token->value));
+                }
+
+                else {
+
+                    if (!is_alphanumeric((current_code_token->value)[len])) {
+
+                        /* Stopped here UNRESOLVED */
+
+                    }
+
+                }
+
+            }
+
+
+
             /* If this is an appropriate replacement */
             if (strcmp(replacement->token->name,
                        current_code_token->token) == 0) {
-
-
-                /*  */
+                /* Set the token's value to the replacement */
                 set_string_token_value(current_code_token,
                     copy_substring(replacement->token->value,
                         string_length(replacement->token->value)));
