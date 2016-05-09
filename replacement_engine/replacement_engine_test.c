@@ -2,18 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+void test1();
 
 int main() {
 
-    char *pseudocode_template = "make like mingus with _x_";
-
-    char *pseudocode = "make like mingus with banana";
-
-    char *code = "x x x x x;";
-
-    char *result = execute_replacement(pseudocode_template, pseudocode, code);
-
-    printf("\n%s\n\n", result);
+    test1();
 
 }
 

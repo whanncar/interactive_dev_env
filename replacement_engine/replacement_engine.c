@@ -316,3 +316,146 @@ void execute_preprocess_replacement(replacement_node *replacements,
         }
     }
 }
+
+
+
+
+void add_string_token_to_list(string_token_list *list, char *s) {
+
+    int len, i;
+    string_token_node *new_node;
+
+    /* Calculate the length of the string */
+    len = string_length(s);
+
+    /* Allocate space for the new node */
+    new_node = (string_token_node *) malloc(sizeof(string_token_node));
+    /* Store the new node's value */
+    new_node->value = s;
+    /* Set new node's next to NULL */
+    new_node->next = NULL;
+
+    /* If the list is empty, make new node the only node in the list */
+    if (list->first == NULL) {
+        list->first = new_node;
+        list->last = new_node;
+    }
+    /* Otherwise, add new node to the list */
+    else {
+        list->last->next = new_node;
+        list->last = new_node;
+    }
+}
+
+
+
+
+/* UNDER CONSTRUCTION UNRESOLVED */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+string_token_list *tokenize(char *s) {
+
+    int i, j;
+    int length;
+    int newline;
+    string_token_list *list;
+
+    /* Initialize list */
+    list = new_string_token_list();
+
+    /* Set length to 0 */
+    length = 0;
+
+    /* For each character in s */
+    for(i = 0; i == 0 || s[i - 1] != '\0'; i++) {
+        /* If the character is a space or a return or the end of the string */
+        if (s[i] == ' ' || s[i] == '\n' || s[i] == '\0') {
+            /* If this character is a return, increment length */
+            if (s[i] == '\n') {
+                length++;
+                i++;
+                newline = 1;
+            }
+            else {
+                newline = 0;
+            }
+            /* 
+             * If this character is a space and was preceded
+             * by a space, move on to next character
+             */
+            if (length == 0) {
+                continue;
+            }
+            /* Add the token to the list */
+            add_string_token_to_list(list, copy_substring(s + i - length, length));
+            /* If there was a return character, decrement i */
+            if (newline) {
+                i--;
+            }
+        }
+        /* If the character is not a space, increment length */
+        else {
+            length++;
+        }
+    }
+
+    return list;
+}
+
+
+string_token_list *new_string_token_list() {
+
+    string_token_list *new_list;
+
+    /* Allocate space for a new list */
+    new_list = (string_token_list *) malloc(sizeof(string_token_list));
+    /* Set all fields to NULL */
+    new_list->first = NULL;
+    new_list->last = NULL;
+
+    return new_list;
+
+}
+
+char *copy_substring(char *str, int len) {
+
+    int i;
+    char *substr;
+
+    /* Allocate space for the copy */
+    substr = (char *) malloc((len + 1) * sizeof(char));
+    /* Copy the substring */
+    for (i = 0; i < len; i++) {
+        substr[i] = str[i];
+    }
+    /* Add an end of string delimiter */
+    substr[len] = '\0';
+
+    return substr;
+}
