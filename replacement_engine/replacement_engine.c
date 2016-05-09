@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "utils.h"
 #include "replacement_engine.h"
 #include <string.h>
 
@@ -106,89 +107,7 @@ replacement_node *preprocess_replacements(char *pseudocode_template,
 }
 
 
-int string_length(char *s) {
 
-    int i;
-
-    for (i = 0; s[i] != '\0'; i++);
-
-    return i;
-
-}
-
-
-
-
-string_token_node *tokenize(char *s) {
-
-    int i, j;
-    int length;
-    int newline;
-    string_token_node *tokens = NULL;
-    string_token_node *current_token = NULL;
-    string_token_node *new_token = NULL;
-
-    length = 0;
-
-    /* For each character in s */
-    for(i = 0; i == 0 || s[i - 1] != '\0'; i++) {
-        /* If the character is a space or a return or the end of the string */
-        if (s[i] == ' ' || s[i] == '\n' || s[i] == '\0') {
-            /* If this character is a return, increment length */
-            if (s[i] == '\n') {
-                length++;
-                i++;
-                newline = 1;
-            }
-            else {
-                newline = 0;
-            }
-            /* 
-             * If this character is a space and was preceded
-             * by a space, move on to next character
-             */
-            if (length == 0) {
-                continue;
-            }
-            /* If this is the first token */
-            if (tokens == NULL) {
-                /* Initialize so that everything will work */
-                tokens = (string_token_node *) malloc(sizeof(string_token_node));
-                current_token = tokens;
-                new_token = tokens;
-            }
-            /* Otherwise */
-            else {
-                /* Allocate space for the new token node */
-                new_token = (string_token_node *) malloc(sizeof(string_token_node));
-            }
-            /* Allocate space for the new token node's token */
-            new_token->token = (char *) malloc((length + 1) * sizeof(char));
-            /* Add the new token node to the linked list */
-            current_token->next = new_token;
-            new_token->next = NULL;
-            /* Copy the token into the new token node */
-            for (j = 0; j < length; j++) {
-                (new_token->token)[j] = s[i - length + j];
-            }
-            /* Add end of string character */
-            (new_token->token)[length] = '\0';
-            /* Get ready for the next token */
-            length = 0;
-            if (newline) {
-                i--;
-            }
-            current_token = new_token;
-        }
-        /* If the character is not a space, increment length */
-        else {
-            length++;
-        }
-    }
-
-    return tokens;
-
-}
 
 
 
@@ -264,18 +183,12 @@ void execute_preprocess_replacement(replacement_node *replacements,
             if (strcmp(replacement->token->name,
                        current_code_token->token) == 0) {
 
-                /* Calculate the length of the replacement value */
-                len = string_length(replacement->token->value);
-                /* Free the current code token node's old token */
-                free(current_code_token->token);
-                /* Allocate space for the current code token node's new token */
-                current_code_token->token = (char *) malloc((len + 1) * sizeof(char));
-                /* Copy the replacement value into the current code token */
-                for (i = 0; i < len + 1; i++) {
-                    (current_code_token->token)[i] = (replacement->token->value)[i];
-                }
 
-                /* Continue to the next code token */
+                /*  */
+                set_string_token_value(current_code_token,
+                    copy_substring(replacement->token->value,
+                        string_length(replacement->token->value)));
+               /* Continue to the next code token */
                 break;
             }
             /* Otherwise */
@@ -320,32 +233,12 @@ void execute_preprocess_replacement(replacement_node *replacements,
 
 
 
-void add_string_token_to_list(string_token_list *list, char *s) {
 
-    int len, i;
-    string_token_node *new_node;
 
-    /* Calculate the length of the string */
-    len = string_length(s);
 
-    /* Allocate space for the new node */
-    new_node = (string_token_node *) malloc(sizeof(string_token_node));
-    /* Store the new node's value */
-    new_node->value = s;
-    /* Set new node's next to NULL */
-    new_node->next = NULL;
 
-    /* If the list is empty, make new node the only node in the list */
-    if (list->first == NULL) {
-        list->first = new_node;
-        list->last = new_node;
-    }
-    /* Otherwise, add new node to the list */
-    else {
-        list->last->next = new_node;
-        list->last = new_node;
-    }
-}
+
+
 
 
 
@@ -353,32 +246,7 @@ void add_string_token_to_list(string_token_list *list, char *s) {
 /* UNDER CONSTRUCTION UNRESOLVED */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* Done */
 string_token_list *tokenize(char *s) {
 
     int i, j;
@@ -429,33 +297,3 @@ string_token_list *tokenize(char *s) {
 }
 
 
-string_token_list *new_string_token_list() {
-
-    string_token_list *new_list;
-
-    /* Allocate space for a new list */
-    new_list = (string_token_list *) malloc(sizeof(string_token_list));
-    /* Set all fields to NULL */
-    new_list->first = NULL;
-    new_list->last = NULL;
-
-    return new_list;
-
-}
-
-char *copy_substring(char *str, int len) {
-
-    int i;
-    char *substr;
-
-    /* Allocate space for the copy */
-    substr = (char *) malloc((len + 1) * sizeof(char));
-    /* Copy the substring */
-    for (i = 0; i < len; i++) {
-        substr[i] = str[i];
-    }
-    /* Add an end of string delimiter */
-    substr[len] = '\0';
-
-    return substr;
-}
