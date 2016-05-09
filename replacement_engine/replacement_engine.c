@@ -166,10 +166,11 @@ char *detokenize(string_token_node *tokenized_code) {
 
 /* Replaced anything that should be replaced in the tokenized code */
 void execute_preprocess_replacement(replacement_node *replacements,
-                                    string_token_node *tokenized_code) {
+                                    string_token_list *tokenized_code) {
     int i, len, prefix;
     replacement_node *replacement;
     string_token_node *current_code_token;
+    string_token_node *temp;
 
     /* For each code token */
     for (current_code_token = tokenized_code->first;
@@ -198,58 +199,29 @@ void execute_preprocess_replacement(replacement_node *replacements,
 
                     if (!is_alphanumeric((current_code_token->value)[len])) {
 
-                        /* Stopped here UNRESOLVED */
+                        if ((current_code_token->value)[len] == '\n') {
 
-                    }
+                            set_string_token_value(current_code_token,
+                                copy_substring(replacement->token->value),
+                                    string_length(replacement->token->value) + 1);
 
-                }
-
-            }
-
-
-
-            /* If this is an appropriate replacement */
-            if (strcmp(replacement->token->name,
-                       current_code_token->token) == 0) {
-                /* Set the token's value to the replacement */
-                set_string_token_value(current_code_token,
-                    copy_substring(replacement->token->value,
-                        string_length(replacement->token->value)));
-               /* Continue to the next code token */
-                break;
-            }
-            /* Otherwise */
-            else {
-                /* Calculate the current code token's length */
-                len = string_length(current_code_token->token);
-                /* If the current code token ends in a return */
-                if ((current_code_token->token)[len - 1] == '\n') {
-                    /* Replace the return with an end of string character */
-                    (current_code_token->token)[len - 1] = '\0';
-                    /* If this is now an appropriate replacement */
-                    if (strcmp(replacement->token->name,
-                               current_code_token->token) == 0) {
-
-                        /* Calculate the length of the replacement value */
-                        len = string_length(replacement->token->value);
-                        /* Free the current code token node's old token */
-                        free(current_code_token->token);
-                        /* Allocate space for the current code token node's new token */
-                        current_code_token->token = (char *) malloc((len + 2) * sizeof(char));
-                        /* Copy the replacement value into the current code token with a return */
-                        for (i = 0; i < len; i++) {
-                            (current_code_token->token)[i] = (replacement->token->value)[i];
+                            (current_code_token->value)[string_length(replacement->token->value)] = '\n';
                         }
-                        (current_code_token->token)[len] = '\n';
-                        (current_code_token->token)[len + 1] = '\0';
 
-                        /* Continue to the next code token */
-                        break;
-                    }
-                    /* Otherwise */
-                    else {
-                        /* Put the return back */
-                        (current_code_token->token)[len - 1] = '\n';
+                        else {
+                            /* Make a new node for the suffix */
+                            temp = new_string_token_node();
+                            temp->value = copy_substring(len,
+                                string_length(current_code_token->value) - len);
+                            /* Add the new node to the linked list */
+                            temp->next = current_code_token->next;
+                            current_code_token->next = temp;
+
+                            /* Excecute the replacement */
+                            set_string_token_value(current_code_token,
+                                copy_substring(replacement->token->value),
+                                    string_length(replacement->token->value));
+                        }
                     }
                 }
             }

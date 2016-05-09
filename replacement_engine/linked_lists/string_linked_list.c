@@ -27,6 +27,19 @@ string_token_list *new_string_token_list() {
 }
 
 
+string_token_node *new_string_token_node() {
+
+    string_token_node *new_node;
+
+    new_node = (string_token_node *) malloc(sizeof(string_token_node));
+
+    new_node->value = NULL;
+    new_node->next = NULL;
+
+    return new_node;
+
+}
+
 void add_string_token_to_list(string_token_list *list, char *s) {
 
     int len, i;
@@ -35,12 +48,10 @@ void add_string_token_to_list(string_token_list *list, char *s) {
     /* Calculate the length of the string */
     len = string_length(s);
 
-    /* Allocate space for the new node */
-    new_node = (string_token_node *) malloc(sizeof(string_token_node));
+    /* Initialize new node */
+    new_node = new_string_token_node();
     /* Store the new node's value */
     new_node->value = s;
-    /* Set new node's next to NULL */
-    new_node->next = NULL;
 
     /* If the list is empty, make new node the only node in the list */
     if (list->first == NULL) {
