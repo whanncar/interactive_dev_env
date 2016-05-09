@@ -32,18 +32,52 @@ char *execute_replacement(char *pseudocode_template, char *pseudocode, char *cod
 }
 
 
+
+
+
+
+replacement_token_list *preprocess_replacements(char *pseudocode_template,
+                                                char *pseudocode) {
+
+    replacement_token_list *replacement_list;
+    string_token_list *p_t_token_list;
+    string_token_list *p_token_list;
+    string_token_node *p;
+    string_token_node *p_t;
+
+    replacement_list = new_replacement_token_list();
+
+    p_t_token_list = tokenize(pseudocode_template);
+    p_token_list = tokenize(pseudocode);
+
+    for (p = p_token_list->first, p_t = p_t_token_list->first;
+         p != NULL;
+         p = p->next, p_t = p_t->next) {
+
+        if ((p_t->value)[0] == '_') {
+
+            /* STOPPED WORKING HERE UNRESOLVED */
+
+        }
+
+    }
+
+}
+
+
+
+
+
 /* Prepares the replacement list from the template and the raw instruction */
 replacement_node *preprocess_replacements(char *pseudocode_template,
                                           char *pseudocode) {
 
     int i, len;
-    replacement_node *replacement_list = NULL;
-    replacement_node *current_replacement_node = NULL;
-    replacement_node *new_replacement_node = NULL;
-    string_token_node *p_t_token_list;
-    string_token_node *p_token_list;
 
-    string_token_node *temp;
+    replacement_token_list *replacement_list;
+    string_token_list *pseudocode_template_tokens;
+    string_token_list *pseudocode_tokens;
+    replacement_node *replacement_node;
 
     /* Tokenize the template and the instruction */
     p_t_token_list = tokenize(pseudocode_template);
